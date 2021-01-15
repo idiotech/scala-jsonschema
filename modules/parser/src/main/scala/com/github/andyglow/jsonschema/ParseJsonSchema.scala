@@ -4,6 +4,7 @@ import java.io.{ByteArrayInputStream, InputStream}
 
 import scala.collection._
 import com.github.andyglow.json.{ParseJson, Value}
+import com.github.andyglow.scalamigration._
 import json.Schema
 import json.schema.validation.Instance._
 
@@ -31,7 +32,7 @@ object ParseJsonSchema {
 
     def arr(k: String): Option[Seq[Value]] = x.get(k) collect { case arr(x) => x }
 
-    def set(k: String): Option[Set[Value]] = x.get(k) collect { case arr(x) => x.toSet }
+    def set(k: String): Option[Set[Value]] = x.get(k) collect { case arr(x) => x.toListSet }
 
   }
 
@@ -54,10 +55,10 @@ object ParseJsonSchema {
       case None => makeStr
       case Some(arr) =>
         tpe.map(_.toLowerCase) match {
-          case None | Some("string")  => Success { `enum` (`string`, arr.toSet) }
-          case Some("integer")        => Success { `enum` (`integer`, arr.toSet) }
-          case Some("boolean")        => Success { `enum` (`boolean`, arr.toSet) }
-          case Some("number")         => Success { `enum` (`number`[Double], arr.toSet) }
+          case None | Some("string")  => Success { `enum` (`string`, arr.toListSet) }
+          case Some("integer")        => Success { `enum` (`integer`, arr.toListSet) }
+          case Some("boolean")        => Success { `enum` (`boolean`, arr.toListSet) }
+          case Some("number")         => Success { `enum` (`number`[Double], arr.toListSet) }
           case Some(x)                => Failure { InvalidEnumType(x) }
         }
     }
@@ -95,7 +96,7 @@ object ParseJsonSchema {
         x.value.obj("properties").map { _.value }.toSuccess("properties is not defined") flatMap { props =>
         val fields = props.collect { case (k, v: obj) =>
             `object`.Field(k, makeType(v).get, required.contains(k))
-        }.toSet
+        }.toListSet
 
         Success(new `object`(fields))
       }

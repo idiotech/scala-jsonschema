@@ -2,6 +2,7 @@ package com.github.andyglow.json
 
 import scala.collection._
 import comparison._
+import com.github.andyglow.scalamigration._
 
 
 sealed trait Value {
@@ -165,10 +166,11 @@ object Value {
 
     lazy val value: Map[String, Value] = underlying match {
       case m: immutable.Map[String, value] => m
+      case m: immutable.ListMap[String, value] => m
       case m                               => m.toMap
     }
 
-    def fieldSet: Set[(String, Value)] = fields.toSet
+    def fieldSet: Set[(String, Value)] = fields.toListSet
 
     def keys: Set[String] = underlying.keySet
 
@@ -178,9 +180,9 @@ object Value {
 
     def ++(other: Option[obj]): obj = other.fold(this)(x => obj(underlying ++ x.underlying))
 
-    def -(otherField: String): obj = obj(underlying.toMap - otherField)
+    def -(otherField: String): obj = obj(underlying - otherField)
 
-    def +(otherField: (String, Value)): obj = obj(underlying.toMap + otherField)
+    def +(otherField: (String, Value)): obj = obj(underlying + otherField)
 
     def canEqual(other: Any): Boolean = other.isInstanceOf[obj]
 

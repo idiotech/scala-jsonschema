@@ -2,6 +2,7 @@ package json
 
 import com.github.andyglow.json.Value.ValueAdapter
 import com.github.andyglow.json._
+import com.github.andyglow.scalamigration.IterableSetOps
 import json.Schema.`object`.Field.RWMode
 import json.schema.{validation => V}
 
@@ -353,7 +354,7 @@ object Schema {
         rwMode: RWMode = RWMode.ReadWrite): Field[T] = new Field(name, tpe, required, default, description = None, rwMode = rwMode)
     }
 
-    def apply[T](field: Field[_], xs: Field[_]*): `object`[T] = new `object`((field +: xs.toSeq).toSet)
+    def apply[T](field: Field[_], xs: Field[_]*): `object`[T] = new `object`((field +: xs.toSeq).toListSet)
   }
 
   // +------------
@@ -382,11 +383,11 @@ object Schema {
     }
   }
   final object `enum` {
-    def of[T](tpe: Schema[_], x: Value, xs: Value*): `enum`[T] = new `enum`[T](tpe, (x +: xs).toSet)
+    def of[T](tpe: Schema[_], x: Value, xs: Value*): `enum`[T] = new `enum`[T](tpe, (x +: xs).toListSet)
     def of[T](x: T, xs: T*)(implicit va: ValueAdapter[T], vs: ValueSchema[T]): `enum`[vs.S] = {
       new `enum`[vs.S](
         vs.schema,
-        (x +: xs).toSet.map { (x: T) => va.adapt(x) })
+        (x +: xs).toListSet.map { (x: T) => va.adapt(x) })
     }
   }
 
@@ -421,7 +422,7 @@ object Schema {
     def discriminatedBy(x: String): Self = new `oneof`[T](subTypes, Some(x))
   }
   final object `oneof` {
-    def of[T](x: Schema[_], xs: Schema[_]*): `oneof`[T] = new `oneof`[T]((x +: xs).toSet, None)
+    def of[T](x: Schema[_], xs: Schema[_]*): `oneof`[T] = new `oneof`[T]((x +: xs).toListSet, None)
   }
 
   // +------------
@@ -449,7 +450,7 @@ object Schema {
     }
   }
   final object `allof` {
-    def of[T](x: Schema[_], xs: Schema[_]*): `allof`[T] = new `allof`[T]((x +: xs).toSet)
+    def of[T](x: Schema[_], xs: Schema[_]*): `allof`[T] = new `allof`[T]((x +: xs).toListSet)
   }
 
   // +------------

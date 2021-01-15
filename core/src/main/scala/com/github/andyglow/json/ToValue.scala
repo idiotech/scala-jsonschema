@@ -35,7 +35,7 @@ trait LowPriorityMapImplicits { this: LowPriorityPrimitiveImplicits =>
 
     mk { items =>
       val v = items map { case (k, v) => (k, to(v)) }
-      obj(v.toMap)
+      obj(v)
     }
   }
 
@@ -44,7 +44,7 @@ trait LowPriorityMapImplicits { this: LowPriorityPrimitiveImplicits =>
 
     mk { items =>
       val v = items map { case (k, v) => (k.toString, to(v)) }
-      obj(v.toMap)
+      obj(v)
     }
   }
 }

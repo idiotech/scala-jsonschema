@@ -60,7 +60,7 @@ trait AsDraftSupport {
         tpe ++
         rw ++
         description)
-    }.toMap ++ {
+    }.toListMap ++ {
       // discrimination logic
       discriminatorField.flatMap { df =>
         for { dk <- x.discriminationKey } yield {
@@ -196,7 +196,7 @@ trait AsDraftSupport {
     }
 
     def json: obj = obj {
-      elements.map { d => d.validation.name -> d.json }.toMap
+      elements.map { d => d.validation.name -> d.json }.toListMap
     }
   }
 
@@ -232,7 +232,7 @@ trait AsDraftSupport {
     }
 
     obj {
-      extractDefs(x, None).toMap
+      extractDefs(x, None).toListMap
     }
   }
 }

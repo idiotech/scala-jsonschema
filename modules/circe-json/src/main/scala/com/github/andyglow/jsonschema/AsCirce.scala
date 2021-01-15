@@ -7,6 +7,8 @@ import io.circe._
 import com.github.andyglow.scalamigration._
 import json.schema.Version
 
+import scala.collection.immutable.ListMap
+
 
 object AsCirce {
 
@@ -17,7 +19,8 @@ object AsCirce {
     case num(x) => Json.fromBigDecimal(x)
     case str(x) => Json.fromString(x)
     case arr(x) => val arr = x map AsCirce.apply; Json.arr(arr.toSeq: _*)
-    case obj(x) => val map = x.toMap mapV AsCirce.apply; Json.obj(map.toSeq: _*)
+    case obj(x) =>
+      val map = ListMap.from(x) mapV AsCirce.apply; Json.obj(map.toSeq: _*)
   }
 
   implicit class CirceSchemaOps[T](val x: Schema[T]) extends AnyVal {
@@ -35,7 +38,7 @@ object AsCirce {
         case x if x.isNumber => num(x.asNumber.get.toDouble)
         case x if x.isString => str(x.asString.get)
         case x if x.isArray  => val a = x.asArray.get map translate; arr(a)
-        case x if x.isObject => val map = x.asObject.get.toMap mapV translate; obj(map)
+        case x if x.isObject => val map = x.asObject.get.toList.toListMap mapV translate; obj(map)
       }
 
       translate(js)

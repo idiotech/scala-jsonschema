@@ -1,11 +1,20 @@
 package com.github.andyglow
 
+import scala.collection.immutable.{ListMap, ListSet}
 import scala.collection.mutable.ListBuffer
 import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
 
 
 object scalamigration {
+
+  implicit class IterableSetOps[A](private val x: TraversableOnce[A]) extends AnyVal {
+    def toListSet = ListSet(x.toList :_*)
+  }
+
+  implicit class IterableMapOps[K, V](private val x: TraversableOnce[(K, V)]) extends AnyVal {
+    def toListMap = ListMap(x.toList :_*)
+  }
 
   implicit class SpecificStringOps(private val x: String) extends AnyVal {
 

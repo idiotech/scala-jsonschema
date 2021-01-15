@@ -1,9 +1,18 @@
 package com.github.andyglow
 
 import scala.util.Try
+import scala.collection.immutable.{ListMap, ListSet}
 
 
 object scalamigration {
+
+  implicit class IterableSetOps[A](private val x: IterableOnce[(A)]) extends AnyVal {
+    def toListSet = ListSet.from(x)
+  }
+
+  implicit class IterableMapOps[K, V](private val x: IterableOnce[(K, V)]) extends AnyVal {
+    def toListMap = ListMap.from(x)
+  }
 
   implicit class SpecificStringOps(private val x: String) extends AnyVal {
 
@@ -18,8 +27,9 @@ object scalamigration {
 
   implicit class MapMigOps[K, V](private val x: Map[K, V]) extends AnyVal {
 
-    @inline def mapV[V2](f: V => V2): Map[K, V2] =
-      x.view.mapValues(f).toMap
+    @inline def mapV[V2](f: V => V2): Map[K, V2] = {
+      ListMap.from(x.view.mapValues(f))
+    }
   }
 
   implicit class TryMigOps[+T](private val e: Try[T]) extends AnyVal {
