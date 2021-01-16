@@ -6,6 +6,8 @@ import ScalaVer.scalaV
 // https://github.com/xerial/sbt-sonatype/issues/71
 publishTo in ThisBuild := sonatypePublishTo.value
 
+ThisBuild / scalaVersion := "2.13.4"
+
 lazy val buildInfo = taskKey[Unit]("Prints Build Info")
 
 lazy val commonSettings = ScalaVer.settings ++ Seq(
@@ -17,6 +19,8 @@ lazy val commonSettings = ScalaVer.settings ++ Seq(
   homepage := Some(new URL("http://github.com/andyglow/scala-jsonschema")),
 
   startYear := Some(2017),
+
+  scalaVersion := "2.13.4",
 
   organizationName := "andyglow",
 
@@ -370,7 +374,7 @@ lazy val root = { project in file(".") }
 
     name := "scala-jsonschema-root",
 
-    crossScalaVersions := Nil,
+    crossScalaVersions := Seq("2.13.4"),
 
     publish / skip := true,
 
